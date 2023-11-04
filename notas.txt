@@ -1,0 +1,7 @@
+1- crear el archivo app.js
+2- Crear la carpeta models 
+3- crear el archivo Server.js en models
+
+index.php - lenguaje php
+.jsp - Java
+.aspx - .net
