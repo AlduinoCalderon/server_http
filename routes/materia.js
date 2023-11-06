@@ -1,9 +1,9 @@
-const{ Router}= require('express');
+const{Router}= require('express');
 const router = Router();
-
-router.get('/', (req, resp) => {resp.json({respuesta:true, mensaje: 'Método get obtener todas las materias, realizado por Alduino' });});
-router.post('/', (req, resp) =>{resp.json({respuesta:true, mensaje: 'Llamada a post - insertar'});});
-router.put('/', (req, resp) => {resp.json({respuesta:true, mensaje: 'Método put realizado por Alduino' });});
-router.delete('/', (req, resp) =>{resp.json({respuesta:true, mensaje: 'Método delete realizado por Alduino'});});
+const{getMateria, getMaterias, postMateria, putMateria, deleteMateria}= require('../controller/materiacontroller');
+router.get('/', getMaterias);
+router.post('/', postMateria);
+router.put('/', putMateria);
+router.delete('/', deleteMateria);
 
 module.exports = router;
