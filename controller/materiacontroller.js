@@ -1,15 +1,50 @@
 const { response } = require("express");
+const materiaModel = require('../models/materia');
 
-const getMaterias = (req, resp=response) =>  {resp.json({respuesta:true, mensaje: 'Método get obtener todas las materias, realizado por Alduino' });}
 
-const getMateria = (req, resp=response) => {resp.json({ respuesta:true, mensaje: 'Método get consultgar una materia, realizado por Alduino' });}
+const getMaterias = async (req, res=response) => {
+    const materias = await materiaModel.findAll();
+    res.json(materias);
+}
 
-const postMateria = (req, resp=response) =>  {
+const getMateria = (req, res = response) => {
+   
+    res.json({
+        respuesta:true,
+        mensaje: 'Llamada a get - consulta solo 1'
+    });
+
+}
+
+const postMateria = (req, res = response) => {
     const body = req.body;
-    resp.json({body, respuesta:true, mensaje: 'Método post para insertar materia, realizado por Alduino' });}
+    res.json({
+        respuesta:true,
+        mensaje: 'Llamada a post - insertar',
+        body
+    });
 
-const putMateria = (req, resp=response) => {resp.json({respuesta:true, mensaje: 'Método put para actualizar materia, realizado por Alduino' });}
+}
+const putMateria = (req, res = response) => {
+    res.json({
+        respuesta:true,
+        mensaje: 'Llamada a put - actualizar'
+    });
 
-const deleteMateria = (req, resp=response)  => {resp.json({respuesta:true, mensaje: 'Método delete para eliminar materia, realizado por Alduino' });}
+}
+const deleteMateria = (req, res = response) => {
+    res.json({
+        respuesta:true,
+        mensaje: 'Llamada a delete - eliminar'
+    });
 
-module.exports = { getMateria, getMaterias, postMateria, putMateria, deleteMateria};
+}
+
+module.exports = {
+    getMaterias,
+    getMateria,
+    postMateria,
+    putMateria,
+    deleteMateria
+    
+}
