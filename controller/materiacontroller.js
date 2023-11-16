@@ -16,13 +16,22 @@ const getMateria = (req, res = response) => {
 
 }
 
-const postMateria = (req, res = response) => {
-    const body = req.body;
-    res.json({
-        respuesta:true,
-        mensaje: 'Llamada a post - insertar',
-        body
-    });
+const postMateria = async (req, res = response) => {
+    const {body}  = req;
+    const materiaParam = {
+        nombreMateria   : body.nombreMateria,
+        estadoMateria   : body.estadoMateria,
+        semestreMateria : body.semestreMateria
+    };
+    try {
+        const materia = await materiaModel.create(materiaParam);
+        res.json({mensaje:"Datos insertados", datos: materia});
+    }
+    catch(error){
+        console.log(error);
+        res.status(500).json({mensaje:"Error en el servidor."});
+
+    }
 
 }
 const putMateria = (req, res = response) => {
