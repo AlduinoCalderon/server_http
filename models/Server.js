@@ -1,37 +1,45 @@
 const express = require('express');
-const cors = require ('cors');
+const cors = require('cors');
 const conecta = require('../database/conecta');
-class Server{
-    constructor(){
+
+class Server {
+    constructor() {
         this.app = express();
         this.port = 8001;
         this.fnConecta();
         this.middleware();
-        //this.routes();
-        this.app.use('/materia', require('../routes/materia'));
+        this.routes();
     }
-    async fnConecta(){
-        try{
+
+    async fnConecta() {
+        try {
             await conecta.authenticate();
             console.log('Base de datos conectada');
-        }
-        catch(error){
+        } catch (error) {
             console.log(error);
         }
     }
-    middleware(){
-        //Para enviar datos al servidor
+
+    middleware() {
+        // Para enviar datos al servidor
         this.app.use(cors());
         this.app.use(express.json());
-        //
         this.app.use(express.static('public'));
     }
-    listen(){
+
+    routes() {
+        this.app.use('/users', require('../routes/user'));
+        this.app.use('/cabins', require('../routes/cabin'));
+        this.app.use('/bookings', require('../routes/booking'));
+        this.app.use('/payments', require('../routes/payment'));
+        this.app.use('/images', require('../routes/image'));
+    }
+
+    listen() {
         this.app.listen(this.port, () => {
             console.log('Escuchando en puerto', this.port);
         });
     }
 }
 
-//para que otro archivo vea esta class
 module.exports = Server;

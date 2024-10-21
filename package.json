@@ -10,10 +10,12 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "23_24bd": "file:",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "mariadb": "^3.2.1",
+    "nodemon": "^3.1.7",
     "sequelize": "^6.33.0"
   }
 }

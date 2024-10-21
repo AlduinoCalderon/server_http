@@ -1,5 +1,5 @@
 const {Sequelize} = require('sequelize');
-const nombreDB = 'pruebanode';
+const nombreDB = 'cabins';
 const usuario = 'root';
 const password = '';
 const servidor = 'localhost';
