@@ -15,9 +15,6 @@ const User = conecta.define('user', {
         type: DataTypes.STRING, 
         allowNull: false 
     },
-    middle_name: { 
-        type: DataTypes.STRING 
-    },
     email: { 
         type: DataTypes.STRING, 
         allowNull: false, 
@@ -25,34 +22,32 @@ const User = conecta.define('user', {
     },
     password: { 
         type: DataTypes.STRING, 
-        allowNull: false 
+        allowNull: false, 
+        defaultValue: 'contraseña123' 
     },
     role: { 
         type: DataTypes.ENUM('user', 'admin'), 
-        allowNull: false 
-    },
-    registration_date: {  // Fecha de creación
-        type: DataTypes.DATE, 
-        defaultValue: DataTypes.NOW, // Almacena la fecha actual al crear un nuevo registro
-        allowNull: false // Se puede marcar como no nulo si es obligatorio
+        allowNull: false,
+        defaultValue: 'user'
     },
     is_active: { 
         type: DataTypes.BOOLEAN, 
         defaultValue: true 
     },
-    modified_date: {  // Fecha de última actualización
+    registration_date: {  
         type: DataTypes.DATE, 
-        defaultValue: DataTypes.NOW, // Almacena la fecha actual al crear un nuevo registro
-        onUpdate: DataTypes.NOW, // Actualiza automáticamente en cada modificación
-        allowNull: false // Se puede marcar como no nulo si es obligatorio
+        defaultValue: DataTypes.NOW, 
+        allowNull: false 
     },
-    connection_string: {  // Nuevo campo
-        type: DataTypes.TEXT, // Tipo TEXT en MySQL
-        allowNull: true // Cambia a false si es obligatorio
+    modified_date: {  
+        type: DataTypes.DATE, 
+        defaultValue: DataTypes.NOW, 
+        onUpdate: DataTypes.NOW, 
+        allowNull: false 
     }
 }, {
-    tableName: 'users',  // Nombre de la tabla
-    timestamps: false,    // Desactivar el manejo automático de timestamps
+    tableName: 'users',  
+    timestamps: false,   
 });
 
 module.exports = User;

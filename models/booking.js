@@ -19,8 +19,8 @@ const Booking = conecta.define('booking', {
         type: DataTypes.DATEONLY, 
         allowNull: false 
     },
-    end_date: { 
-        type: DataTypes.DATEONLY, 
+    nights: { 
+        type: DataTypes.INTEGER, 
         allowNull: false 
     },
     status: { 
