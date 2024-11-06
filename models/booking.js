@@ -21,7 +21,8 @@ const Booking = conecta.define('booking', {
     },
     nights: { 
         type: DataTypes.INTEGER, 
-        allowNull: false 
+        allowNull: false,
+        defaultValue: 1 
     },
     status: { 
         type: DataTypes.ENUM('pending', 'confirmed', 'canceled'), 
