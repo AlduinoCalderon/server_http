@@ -1,9 +1,14 @@
-const {Sequelize} = require('sequelize');
-const nombreDB = 'cabins';
-const usuario = 'root';
-const password = '';
-const servidor = 'localhost';
+require('dotenv').config();
+const { Sequelize } = require('sequelize');
 
-const dbConn = new Sequelize(nombreDB, usuario, password, {host:servidor,dialect:'mariadb'});
+const dbConn = new Sequelize(
+  process.env.DB_NAME,
+  process.env.DB_USER,
+  process.env.DB_PASSWORD,
+  {
+    host: process.env.DB_HOST,
+    dialect: process.env.DB_DIALECT
+  }
+);
 
 module.exports = dbConn;
