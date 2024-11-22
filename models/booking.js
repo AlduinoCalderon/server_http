@@ -29,7 +29,9 @@ const Booking = conecta.define('booking', {
         defaultValue: 'pending' 
     },
     discount: { 
-        type: DataTypes.DECIMAL(5, 2) 
+        type: DataTypes.DECIMAL(5, 2),
+        allowNull: false,
+        defaultValue: 0 
     },
     note: { 
         type: DataTypes.TEXT 
