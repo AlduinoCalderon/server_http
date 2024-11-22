@@ -13,7 +13,7 @@ const Booking = conecta.define('booking', {
     },
     cabin_id: { 
         type: DataTypes.INTEGER, 
-        allowNull: false 
+        allowNull: false
     },
     start_date: { 
         type: DataTypes.DATEONLY, 
@@ -30,10 +30,6 @@ const Booking = conecta.define('booking', {
     },
     discount: { 
         type: DataTypes.DECIMAL(5, 2) 
-    },
-    is_active: { 
-        type: DataTypes.BOOLEAN, 
-        defaultValue: true 
     },
     note: { 
         type: DataTypes.TEXT 
