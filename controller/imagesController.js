@@ -1,4 +1,4 @@
-const { Image } = require('../models');
+const Image = require('../models/image');
 const upload = require('../utils/s3');
 
 // Obtener todas las imágenes
