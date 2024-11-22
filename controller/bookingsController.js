@@ -3,7 +3,7 @@ const BookingModel = require('../models/booking');
 const { QueryTypes } = require('sequelize');
 
 const getBookings = async (req, resp = response) => {
-    const bookings = await BookingModel.sequelize.query("SELECT * FROM bookings", { type: QueryTypes.SELECT });
+    const bookings = await BookingModel.sequelize.query("SELECT * FROM bookings;", { type: QueryTypes.SELECT });
     resp.json(bookings);
 }
 
