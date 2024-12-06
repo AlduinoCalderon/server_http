@@ -1,10 +1,11 @@
 const { response } = require('express');
 const { QueryTypes } = require('sequelize');
-const sequelize = require('../database/conecta');  // Asegúrate de importar esto correctamente
+const sequelize = require('../database/conecta');
 const BookingModel = require('../models/booking');
 const UserModel = require('../models/user');
 const CabinModel = require('../models/cabin');
-const emailService = require('../utils/sendGridEmailService'); // Actualiza la ruta al archivo correcto
+const emailService = require('../utils/emailService');
+const { generateReservationPDF } = require('../utils/pdfService');
 const moment = require('moment');
 
 const getBookings = async (req, resp = response) => {
@@ -46,14 +47,40 @@ const postBooking = async (req, resp = response) => {
 
         await transaction.commit();
 
-        // Enviar el correo de confirmación de la reserva
+        // Obtener la información del usuario y la cabina
         const user = await UserModel.findByPk(booking.user_id);
+        const cabin = await CabinModel.findByPk(booking.cabin_id);
+
+        // Generar el PDF de la reserva
+        const pdfPath = generateReservationPDF({
+            booking_id: booking.booking_id,
+            user_name: `${user.first_name} ${user.last_name}`,
+            cabin_name: cabin.name,
+            start_date: booking.start_date,
+            end_date: moment(booking.start_date).add(booking.nights, 'days').format('YYYY-MM-DD'),
+            discount: booking.discount,
+            status: booking.status,
+            note: booking.note
+        });
+
+        // Enviar el correo de confirmación de la reserva con el PDF adjunto
         const subject = 'Confirmación de Reserva';
         const text = `Hola ${user.first_name}, te enviamos la confirmación de tu reserva.`;
         const html = `<p>Hola ${user.first_name},</p><p>Te enviamos la confirmación de tu reserva.</p>`;
 
         try {
-            await emailService.sendEmail({ to: user.email, subject, text, html });
+            await emailService.sendEmail({
+                to: user.email,
+                subject: subject,
+                text: text,
+                html: html,
+                attachments: [
+                    {
+                        filename: `reserva_${booking.booking_id}.pdf`,
+                        path: pdfPath
+                    }
+                ]
+            });
         } catch (error) {
             console.error('Error al enviar el correo:', error);
         }
@@ -86,14 +113,40 @@ const putBooking = async (req, resp = response) => {
 
         await transaction.commit();
 
-        // Enviar el correo de actualización de la reserva
+        // Obtener la información del usuario y la cabina
         const user = await UserModel.findByPk(booking.user_id);
+        const cabin = await CabinModel.findByPk(booking.cabin_id);
+
+        // Generar el PDF de la reserva actualizada
+        const pdfPath = generateReservationPDF({
+            booking_id: booking.booking_id,
+            user_name: `${user.first_name} ${user.last_name}`,
+            cabin_name: cabin.name,
+            start_date: booking.start_date,
+            end_date: moment(booking.start_date).add(booking.nights, 'days').format('YYYY-MM-DD'),
+            discount: booking.discount,
+            status: booking.status,
+            note: booking.note
+        });
+
+        // Enviar el correo de actualización de la reserva con el PDF adjunto
         const subject = 'Actualización de Reserva';
         const text = `Hola ${user.first_name}, te enviamos la actualización de tu reserva.`;
         const html = `<p>Hola ${user.first_name},</p><p>Te enviamos la confirmación actualizada de tu reserva.</p>`;
 
         try {
-            await emailService.sendEmail({ to: user.email, subject, text, html });
+            await emailService.sendEmail({
+                to: user.email,
+                subject: subject,
+                text: text,
+                html: html,
+                attachments: [
+                    {
+                        filename: `reserva_${booking.booking_id}.pdf`,
+                        path: pdfPath
+                    }
+                ]
+            });
         } catch (error) {
             console.error('Error al enviar el correo:', error);
         }
