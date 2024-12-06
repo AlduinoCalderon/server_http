@@ -5,10 +5,8 @@ const BookingModel = require('../models/booking');
 const UserModel = require('../models/user');
 const CabinModel = require('../models/cabin');
 const emailService = require('../utils/emailService');
-const generateReservationPDF = require('../utils/pdfService');
 const moment = require('moment');
 
-// Obtener todas las reservas
 const getBookings = async (req, resp = response) => {
     try {
         const bookings = await sequelize.query("SELECT * FROM bookings;", { type: QueryTypes.SELECT });
@@ -19,7 +17,6 @@ const getBookings = async (req, resp = response) => {
     }
 };
 
-// Obtener una reserva por su ID
 const getBooking = async (req, resp = response) => {
     const id = req.params.id;
     try {
@@ -35,7 +32,6 @@ const getBooking = async (req, resp = response) => {
     }
 };
 
-// Crear una nueva reserva
 const postBooking = async (req, resp = response) => {
     const { body } = req;
     const transaction = await sequelize.transaction();
@@ -70,39 +66,17 @@ const postBooking = async (req, resp = response) => {
 
         // Asunto y cuerpo del correo
         const subject = 'Confirmación de Reserva';
-        const text = `Hola ${user.first_name}, te enviamos la confirmación de tu reserva.`;
+        const text = `Hola ${user.first_name}, te enviamos la confirmación de tu reserva del día ${booking.start_date}.`;
         const html = `<p>Hola ${user.first_name},</p><p>Te enviamos la confirmación de tu reserva con id: ${booking.booking_id}.</p>${bookingInfo}`;
 
-        // Generar el PDF de la reserva (si es posible)
-        let pdfPath = null;
-        try {
-            pdfPath = generateReservationPDF({
-                booking_id: booking.booking_id,
-                user_name: `${user.first_name} ${user.last_name}`,
-                cabin_name: cabin.name,
-                start_date: booking.start_date,
-                end_date: moment(booking.start_date).add(booking.nights, 'days').format('YYYY-MM-DD'),
-                discount: booking.discount,
-                status: booking.status,
-                note: booking.note
-            });
-        } catch (error) {
-            console.error('No se pudo generar el PDF:', error);
-        }
-
-        // Enviar el correo con el PDF adjunto si existe
+        // Enviar el correo de confirmación de la reserva
         try {
             await emailService.sendEmail({
                 to: user.email,
                 subject: subject,
                 text: text,
                 html: html,
-                attachments: pdfPath ? [
-                    {
-                        filename: `reserva_${booking.booking_id}.pdf`,
-                        path: pdfPath
-                    }
-                ] : []
+                attachments: []  // Sin PDF, solo la información en HTML
             });
         } catch (error) {
             console.error('Error al enviar el correo:', error);
@@ -116,7 +90,6 @@ const postBooking = async (req, resp = response) => {
     }
 };
 
-// Actualizar una reserva existente
 const putBooking = async (req, resp = response) => {
     const { id } = req.params;
     const { body } = req;
@@ -138,12 +111,12 @@ const putBooking = async (req, resp = response) => {
         await transaction.commit();
 
         // Obtener la información del usuario y la cabina
-        const user = await UserModel.findByPk(booking.user_id, { transaction });
-        const cabin = await CabinModel.findByPk(booking.cabin_id, { transaction });
+        const user = await UserModel.findByPk(booking.user_id);
+        const cabin = await CabinModel.findByPk(booking.cabin_id);
 
-        // Información del correo
+        // Información que se incluirá en el correo
         const bookingInfo = `
-        <h2>Actualización de tu Reserva</h2>
+        <h2>Confirmación de tu Reserva Actualizada</h2>
         <p><strong>ID de Reserva:</strong> ${booking.booking_id}</p>
         <p><strong>Usuario:</strong> ${user.first_name} ${user.last_name}</p>
         <p><strong>Cabaña:</strong> ${cabin.name}</p>
@@ -155,40 +128,19 @@ const putBooking = async (req, resp = response) => {
         <p><strong>Costo Total:</strong> ${totalCost}</p>
         `;
 
+        // Asunto y cuerpo del correo
         const subject = 'Actualización de Reserva';
-        const text = `Hola ${user.first_name}, te enviamos la actualización de tu reserva.`;
+        const text = `Hola ${user.first_name}, te enviamos la actualización de tu reserva del día ${booking.start_date}.`;
         const html = `<p>Hola ${user.first_name},</p><p>Te enviamos la confirmación actualizada de tu reserva con id: ${booking.booking_id}.</p>${bookingInfo}`;
 
-        // Generar el PDF de la reserva actualizada (si es posible)
-        let pdfPath = null;
-        try {
-            pdfPath = generateReservationPDF({
-                booking_id: booking.booking_id,
-                user_name: `${user.first_name} ${user.last_name}`,
-                cabin_name: cabin.name,
-                start_date: booking.start_date,
-                end_date: moment(booking.start_date).add(booking.nights, 'days').format('YYYY-MM-DD'),
-                discount: booking.discount,
-                status: booking.status,
-                note: booking.note
-            });
-        } catch (error) {
-            console.error('No se pudo generar el PDF:', error);
-        }
-
-        // Enviar el correo con el PDF adjunto si existe
+        // Enviar el correo de actualización de la reserva
         try {
             await emailService.sendEmail({
                 to: user.email,
                 subject: subject,
                 text: text,
                 html: html,
-                attachments: pdfPath ? [
-                    {
-                        filename: `reserva_${booking.booking_id}.pdf`,
-                        path: pdfPath
-                    }
-                ] : []
+                attachments: []  // Sin PDF, solo la información en HTML
             });
         } catch (error) {
             console.error('Error al enviar el correo:', error);
@@ -202,7 +154,6 @@ const putBooking = async (req, resp = response) => {
     }
 };
 
-// Eliminar una reserva (borrado lógico)
 const deleteBooking = async (req, resp = response) => {
     const { id } = req.params;
     const transaction = await sequelize.transaction();
