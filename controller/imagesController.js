@@ -1,5 +1,4 @@
 const Image = require('../models/image');
-const upload = require('../utils/s3');
 
 // Obtener todas las imágenes
 const getImages = async (req, res) => {
