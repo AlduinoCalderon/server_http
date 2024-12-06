@@ -1,5 +1,4 @@
 const nodemailer = require('nodemailer');
-const { response } = require("express");
 
 // Crear el transportador (transporter) usando las credenciales de tu servicio de correo
 const transporter = nodemailer.createTransport({
@@ -11,9 +10,7 @@ const transporter = nodemailer.createTransport({
 });
 
 // Función para enviar un correo
-const sendEmail = async (req, resp = response) => {
-    const { to, subject, text, html } = req.body;
-
+const sendEmail = async ({ to, subject, text, html }) => {
     // Definir el mensaje
     const mailOptions = {
         from: process.env.EMAIL_USER,  // Correo desde el cual se enviará el mensaje
@@ -26,19 +23,11 @@ const sendEmail = async (req, resp = response) => {
     try {
         // Enviar el correo
         const info = await transporter.sendMail(mailOptions);
-
-        // Respuesta si el correo fue enviado correctamente
-        resp.json({
-            message: "Correo enviado exitosamente",
-            info: info.response
-        });
+        console.log(`Correo enviado: ${info.response}`);
     } catch (error) {
         // Manejar errores si ocurre algo
-        console.error(error);
-        resp.status(500).json({
-            message: "Error al enviar el correo",
-            error: error.message
-        });
+        console.error(`Error al enviar el correo: ${error.message}`);
+        throw new Error(`Error al enviar el correo: ${error.message}`);
     }
 };
 
