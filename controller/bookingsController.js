@@ -5,7 +5,7 @@ const BookingModel = require('../models/booking');
 const UserModel = require('../models/user');
 const CabinModel = require('../models/cabin');
 const emailService = require('../utils/emailService');
-const { generateReservationPDF } = require('../utils/pdfService');
+const { generateReservationPDF } = require('../services/pdfService');
 const moment = require('moment');
 
 const getBookings = async (req, resp = response) => {
