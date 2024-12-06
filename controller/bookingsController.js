@@ -4,7 +4,7 @@ const sequelize = require('../database/conecta');
 const BookingModel = require('../models/booking');
 const UserModel = require('../models/user');
 const CabinModel = require('../models/cabin');
-const emailService = require('../utils/emailService');
+const emailService = require('../utils/sendGridEmailService');
 const moment = require('moment');
 
 const getBookings = async (req, resp = response) => {
