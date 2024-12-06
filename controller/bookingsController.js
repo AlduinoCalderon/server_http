@@ -1,12 +1,11 @@
 const { response } = require("express");
-const { Sequelize, QueryTypes } = require('sequelize');
+const { QueryTypes } = require('sequelize');
+const sequelize = require('../database/conecta');  // Asegúrate de importar esto correctamente
 const BookingModel = require('../models/booking');
 const UserModel = require('../models/user');
 const CabinModel = require('../models/cabin');
 const emailService = require('../utils/emailService');
 const moment = require('moment');
-
-const sequelize = new Sequelize(process.env.DB_CONNECTION_STRING);
 
 const getBookings = async (req, resp = response) => {
     try {
