@@ -1,6 +1,6 @@
 const { Router } = require('express');
 const { getImages, getImage, postImage, putImage, deleteImage, uploadImage } = require('../controller/imagesController');
-const upload = require('../utils/s3');
+
 
 const router = Router();
 
