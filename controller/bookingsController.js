@@ -1,5 +1,5 @@
-const response  = require('express');
-const QueryTypes = require('sequelize');
+const { response } = require('express');
+const { QueryTypes } = require('sequelize');
 const sequelize = require('../database/conecta');
 const BookingModel = require('../models/booking');
 const UserModel = require('../models/user');
