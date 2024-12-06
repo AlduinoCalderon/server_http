@@ -10,6 +10,5 @@ router.get('/:id', getImage);
 router.post('/', postImage);
 router.put('/:id', putImage);
 router.delete('/:id', deleteImage);
-router.post('/upload', upload.single('image'), uploadImage);
 
 module.exports = router;
