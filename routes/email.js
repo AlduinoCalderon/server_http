@@ -1,5 +1,5 @@
 const express = require('express');
-const { sendEmail } = require('../controllers/emailController');
+const { sendEmail } = require('../controller/emailController');
 const router = express.Router();
 
 // Ruta para enviar correos electrónicos
