@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const conecta = require('../database/conecta');
+const emailRoutes = require('./src/routes/emailRoutes');
 
 class Server {
     constructor() {
@@ -33,6 +34,7 @@ class Server {
         this.app.use('/bookings', require('../routes/booking'));
         this.app.use('/payments', require('../routes/payment'));
         this.app.use('/images', require('../routes/image'));
+        this.app.use('/email', emailRoutes);
     }
 
     listen() {
