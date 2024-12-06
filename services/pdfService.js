@@ -1,12 +1,13 @@
 const PDFDocument = require('pdfkit');
 const path = require('path');
+const fs = require('fs'); // Agrega esta línea para importar el módulo fs
 
 // Generar el PDF de la reserva
 function generateReservationPDF(reserva) {
   const doc = new PDFDocument();
 
   const pdfPath = path.join(__dirname, '..', '..', 'reservas', `${reserva.booking_id}.pdf`);
-  doc.pipe(fs.createWriteStream(pdfPath));
+  doc.pipe(fs.createWriteStream(pdfPath)); // Ahora 'fs' está definido
 
   // Título
   doc.fontSize(25).text('Confirmación de Reserva', { align: 'center' });
