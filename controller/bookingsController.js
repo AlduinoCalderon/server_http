@@ -4,7 +4,7 @@ const sequelize = require('../database/conecta');
 const BookingModel = require('../models/booking');
 const UserModel = require('../models/user');
 const CabinModel = require('../models/cabin');
-const emailService = require('../utils/sendGridEmailService');
+const sendEmail = require('../utils/sendGridEmailService');
 const moment = require('moment');
 
 const getBookings = async (req, resp = response) => {
@@ -71,7 +71,7 @@ const postBooking = async (req, resp = response) => {
 
         // Enviar el correo de confirmación de la reserva
         try {
-            await emailService.sendEmail({
+            await sendEmail.sendEmail({
                 to: user.email,
                 subject: subject,
                 text: text,
@@ -135,7 +135,7 @@ const putBooking = async (req, resp = response) => {
 
         // Enviar el correo de actualización de la reserva
         try {
-            await emailService.sendEmail({
+            await sendEmail.sendEmail({
                 to: user.email,
                 subject: subject,
                 text: text,
