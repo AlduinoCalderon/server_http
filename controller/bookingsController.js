@@ -1,11 +1,11 @@
-const { response } = require('express');
-const { QueryTypes } = require('sequelize');
+const response  = require('express');
+const QueryTypes = require('sequelize');
 const sequelize = require('../database/conecta');
 const BookingModel = require('../models/booking');
 const UserModel = require('../models/user');
 const CabinModel = require('../models/cabin');
 const emailService = require('../utils/emailService');
-const { generateReservationPDF } = require('../services/pdfService');
+const generateReservationPDF = require('../utils/pdfService');
 const moment = require('moment');
 
 // Obtener todas las reservas
