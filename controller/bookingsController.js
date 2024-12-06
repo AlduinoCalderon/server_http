@@ -41,7 +41,7 @@ const postBooking = async (req, resp = response) => {
 
         // Obtener la cabina seleccionada y calcular el costo total
         const selectedCabin = await CabinModel.findByPk(body.cabin_id, { transaction });
-        const totalCost = (selectedCabin.cost_per_night * body.nights) - body.discount;
+        const totalCost = (selectedCabin.cost_per_night * body.nights)*(1-(body.discount/100));
         await booking.update({ total_cost: totalCost }, { transaction });
 
         await transaction.commit();
@@ -105,7 +105,7 @@ const putBooking = async (req, resp = response) => {
 
         // Calcular el costo total de la reserva
         const selectedCabin = await CabinModel.findByPk(body.cabin_id, { transaction });
-        const totalCost = (selectedCabin.cost_per_night * body.nights) - body.discount;
+        const totalCost = (selectedCabin.cost_per_night * body.nights)*(1-(body.discount/100));
         await booking.update({ total_cost: totalCost }, { transaction });
 
         await transaction.commit();
