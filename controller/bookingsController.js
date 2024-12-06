@@ -44,22 +44,27 @@ const postBooking = async (req, resp = response) => {
         const totalCost = (selectedCabin.cost_per_night * body.nights) - body.discount;
         await booking.update({ total_cost: totalCost }, { transaction });
 
-        // Enviar el correo de confirmación de la reserva
-        const user = await UserModel.findByPk(booking.user_id, { transaction });
-        const subject = 'Confirmación de Reserva';
-        const text = `Hola ${user.first_name}, te enviamos la confirmación de tu reserva.`;
-        const html = `<p>Hola ${user.first_name},</p><p>Te enviamos la confirmación de tu reserva.</p>`;
-        
-        await emailService.sendEmail({
-            to: user.email,
-            subject: subject,
-            text: text,
-            html: html
-        });
-
+        // Confirmar la transacción
         await transaction.commit();
 
-        resp.json({ mensaje: "Reserva creada y correo enviado exitosamente.", Booking: booking });
+        // Enviar el correo de confirmación de la reserva (fuera de la transacción)
+        try {
+            const user = await UserModel.findByPk(booking.user_id);
+            const subject = 'Confirmación de Reserva';
+            const text = `Hola ${user.first_name}, te enviamos la confirmación de tu reserva.`;
+            const html = `<p>Hola ${user.first_name},</p><p>Te enviamos la confirmación de tu reserva.</p>`;
+            
+            await emailService.sendEmail({
+                to: user.email,
+                subject: subject,
+                text: text,
+                html: html
+            });
+            resp.json({ mensaje: "Reserva creada y correo enviado exitosamente.", Booking: booking });
+        } catch (emailError) {
+            console.error("Error al enviar el correo:", emailError);
+            resp.json({ mensaje: "Reserva creada, pero falló el envío del correo.", Booking: booking });
+        }
     } catch (error) {
         await transaction.rollback();
         console.error(error);
@@ -85,22 +90,27 @@ const putBooking = async (req, resp = response) => {
         const totalCost = (selectedCabin.cost_per_night * body.nights) - body.discount;
         await booking.update({ total_cost: totalCost }, { transaction });
 
-        // Enviar el correo de actualización de la reserva
-        const user = await UserModel.findByPk(booking.user_id, { transaction });
-        const subject = 'Actualización de Reserva';
-        const text = `Hola ${user.first_name}, te enviamos la actualización de tu reserva.`;
-        const html = `<p>Hola ${user.first_name},</p><p>Te enviamos la confirmación actualizada de tu reserva.</p>`;
-        
-        await emailService.sendEmail({
-            to: user.email,
-            subject: subject,
-            text: text,
-            html: html
-        });
-
+        // Confirmar la transacción
         await transaction.commit();
 
-        resp.json({ mensaje: "Reserva actualizada y correo enviado exitosamente.", Booking: booking });
+        // Enviar el correo de actualización de la reserva (fuera de la transacción)
+        try {
+            const user = await UserModel.findByPk(booking.user_id);
+            const subject = 'Actualización de Reserva';
+            const text = `Hola ${user.first_name}, te enviamos la actualización de tu reserva.`;
+            const html = `<p>Hola ${user.first_name},</p><p>Te enviamos la confirmación actualizada de tu reserva.</p>`;
+            
+            await emailService.sendEmail({
+                to: user.email,
+                subject: subject,
+                text: text,
+                html: html
+            });
+            resp.json({ mensaje: "Reserva actualizada y correo enviado exitosamente.", Booking: booking });
+        } catch (emailError) {
+            console.error("Error al enviar el correo:", emailError);
+            resp.json({ mensaje: "Reserva actualizada, pero falló el envío del correo.", Booking: booking });
+        }
     } catch (error) {
         await transaction.rollback();
         console.error(error);
