@@ -26,6 +26,7 @@ const getUser = async (req, resp = response) => {
 };
 
 // Función para registrar un usuario
+// Función para registrar un usuario
 const registerUser = async (req, resp = response) => {
     const { first_name, last_name, email, password, telefono, role } = req.body;
 
@@ -42,14 +43,15 @@ const registerUser = async (req, resp = response) => {
         });
 
         // Generar un token para la verificación
-        const verificationToken = jwt.sign({ userId: user.user_id }, process.env.JWT_SECRET, { expiresIn: '1d' });
+        const verificationToken = jwt.sign({ email: user.email }, process.env.JWT_SECRET, { expiresIn: '1d' });
 
         // Actualizar el campo verification_token en la base de datos
         await user.update({ verification_token: verificationToken });
 
-        // Enviar correo de verificación
-        const verificationUrl = `https://cabinsfront.vercel.app/users/${user_id}/verify/${verificationToken}`;
+        // Generar la URL de verificación con el email en vez del user_id
+        const verificationUrl = `https://cabinsfront.vercel.app/users/verify-email/${user.email}/${verificationToken}`;
 
+        // Enviar correo de verificación
         await sendEmail({
             to: user.email,
             subject: 'Verifica tu correo en el Sistema de Reserva de Cabañas',
@@ -68,34 +70,37 @@ const registerUser = async (req, resp = response) => {
     }
 };
 
+
 // Función para verificar el token y activar la cuenta
 
+// Función para verificar el token y activar la cuenta
 const verifyEmail = async (req, res) => {
     try {
-      const { id, token } = req.params;
+        const { email, token } = req.params;
   
-      // Buscar al usuario por ID
-      const user = await User.findById(id);
-      if (!user) {
-        return res.status(404).json({ message: 'Usuario no encontrado' });
-      }
+        // Buscar al usuario por el email
+        const user = await UserModel.findOne({ where: { email: email } });
+        if (!user) {
+            return res.status(404).json({ message: 'Usuario no encontrado' });
+        }
   
-      // Validar el token
-      const isValid = verifyToken(token, user.email); // Asegúrate de usar un método seguro
-      if (!isValid) {
-        return res.status(400).json({ message: 'Token inválido o expirado' });
-      }
+        // Validar el token
+        const isValid = jwt.verify(token, process.env.JWT_SECRET); // Asegúrate de usar el método seguro
+        if (!isValid) {
+            return res.status(400).json({ message: 'Token inválido o expirado' });
+        }
   
-      // Verificar al usuario
-      user.is_active = true;
-      await user.save();
+        // Verificar al usuario
+        user.is_active = true;
+        await user.save();
   
-      res.status(200).json({ message: 'Correo verificado con éxito' });
+        res.status(200).json({ message: 'Correo verificado con éxito' });
     } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: 'Error al verificar el correo' });
+        console.error(error);
+        res.status(500).json({ message: 'Error al verificar el correo' });
     }
-  };
+};
+
 const postUser = async (req, resp = response) => {
     const { body } = req;
     try {
