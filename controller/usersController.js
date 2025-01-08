@@ -76,7 +76,7 @@ const registerUser = async (req, resp = response) => {
 // Función para verificar el token y activar la cuenta
 const verifyEmail = async (req, res) => {
     try {
-        const { email, token } = req.params;
+        const { email, verification_token } = req.params;
   
         // Buscar al usuario por el email
         const user = await UserModel.findOne({ where: { email: email } });
@@ -85,7 +85,7 @@ const verifyEmail = async (req, res) => {
         }
   
         // Validar el token
-        const isValid = jwt.verify(token, process.env.JWT_SECRET); // Asegúrate de usar el método seguro
+        const isValid = jwt.verify(verification_token, process.env.JWT_SECRET); // Asegúrate de usar el método seguro
         if (!isValid) {
             return res.status(400).json({ message: 'Token inválido o expirado' });
         }
