@@ -68,33 +68,33 @@ const registerUser = async (req, resp = response) => {
 };
 
 // Función para verificar el token y activar la cuenta
-const verifyEmail = async (req, resp = response) => {
-    const { token } = req.query;
 
+const verifyEmail = async (req, res) => {
     try {
-        // Decodificar el token
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-        // Buscar al usuario con el ID decodificado
-        const user = await UserModel.findByPk(decoded.userId);
-        if (!user) {
-            return resp.status(404).json({ mensaje: "Usuario no encontrado" });
-        }
-
-        // Verificar que el token coincide
-        if (user.verification_token !== token) {
-            return resp.status(400).json({ mensaje: "Token no válido" });
-        }
-
-        // Activar la cuenta
-        await user.update({ is_active: true, verification_token: null }); // Descartamos el token después de verificar
-
-        resp.json({ mensaje: "Cuenta verificada con éxito" });
+      const { id, token } = req.params;
+  
+      // Buscar al usuario por ID
+      const user = await User.findById(id);
+      if (!user) {
+        return res.status(404).json({ message: 'Usuario no encontrado' });
+      }
+  
+      // Validar el token
+      const isValid = verifyToken(token, user.email); // Asegúrate de usar un método seguro
+      if (!isValid) {
+        return res.status(400).json({ message: 'Token inválido o expirado' });
+      }
+  
+      // Verificar al usuario
+      user.is_active = true;
+      await user.save();
+  
+      res.status(200).json({ message: 'Correo verificado con éxito' });
     } catch (error) {
-        console.log(error);
-        resp.status(400).json({ mensaje: "Token no válido o expirado" });
+      console.error(error);
+      res.status(500).json({ message: 'Error al verificar el correo' });
     }
-};
+  };
 const postUser = async (req, resp = response) => {
     const { body } = req;
     try {
