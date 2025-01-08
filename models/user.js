@@ -32,7 +32,11 @@ const User = conecta.define('user', {
     },
     is_active: { 
         type: DataTypes.BOOLEAN, 
-        defaultValue: true 
+        defaultValue: false 
+    },
+    telefono: { 
+        type: DataTypes.STRING, 
+        allowNull: true 
     },
     registration_date: {  
         type: DataTypes.DATE, 
@@ -44,6 +48,10 @@ const User = conecta.define('user', {
         defaultValue: DataTypes.NOW, 
         onUpdate: DataTypes.NOW, 
         allowNull: false 
+    }, 
+    verification_token: {
+        type: DataTypes.STRING,
+        allowNull: true
     }
 }, {
     tableName: 'users',  
