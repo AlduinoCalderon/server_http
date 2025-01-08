@@ -48,7 +48,8 @@ const registerUser = async (req, resp = response) => {
         await user.update({ verification_token: verificationToken });
 
         // Enviar correo de verificación
-        const verificationUrl = `https://cabinsfront.vercel.app/verificar?token=${verificationToken}`;
+        const verificationUrl = `https://cabinsfront.vercel.app/users/${userId}/verify/${verificationToken}`;
+
         await sendEmail({
             to: user.email,
             subject: 'Verifica tu correo en el Sistema de Reserva de Cabañas',
