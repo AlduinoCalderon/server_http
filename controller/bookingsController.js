@@ -9,14 +9,22 @@ const moment = require('moment');
 
 const getBookings = async (req, resp = response) => {
     try {
-        const bookings = await sequelize.query("SELECT * FROM bookings;", { type: QueryTypes.SELECT });
+        const bookings = await sequelize.query("SELECT * FROM bookings order by booking_id DESC", { type: QueryTypes.SELECT });
         resp.json(bookings);
     } catch (error) {
         console.error(error);
         resp.status(500).json({ mensaje: "Error en el servidor" });
     }
 };
-
+const getnewerBookings = async (req, resp = response) => {
+    try {
+        const bookings = await sequelize.query("SELECT * FROM bookings order by booking_id DESC limit 10;", { type: QueryTypes.SELECT });
+        resp.json(bookings);
+    } catch (error) {
+        console.error(error);
+        resp.status(500).json({ mensaje: "Error en el servidor" });
+    }
+};
 const getBooking = async (req, resp = response) => {
     const id = req.params.id;
     try {
@@ -133,7 +141,7 @@ const putBooking = async (req, resp = response) => {
             await sendEmail.sendEmail({
                 to: user.email,
                 subject: subject,
-                templateId: 'd-efba084a8c8a4927a2a3835de9237ee4',  // Reemplaza con tu ID de plantilla
+                templateId: 'd-efba084a8c8a4927a2a3835de9237ee4',  
                 dynamicTemplateData: bookingInfo
             });
         } catch (error) {
@@ -171,6 +179,7 @@ const deleteBooking = async (req, resp = response) => {
 
 module.exports = {
     getBookings,
+    getnewerBookings,
     getBooking,
     postBooking,
     putBooking,
