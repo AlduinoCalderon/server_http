@@ -7,6 +7,7 @@ const router = Router();
 router.post('/login', async (req, res) => {
     try {
         const { email, password } = req.body;
+        console.log('Intento de login con:', { email });
         
         // Validar que se proporcionen email y contraseña
         if (!email || !password) {
@@ -18,6 +19,8 @@ router.post('/login', async (req, res) => {
 
         // Buscar usuario por email
         const user = await User.findOne({ where: { email } });
+        console.log('Usuario encontrado:', user ? 'Sí' : 'No');
+        
         if (!user) {
             return res.status(401).json({ 
                 status: 'error',
@@ -26,7 +29,10 @@ router.post('/login', async (req, res) => {
         }
 
         // Verificar contraseña
+        console.log('Comparando contraseñas...');
         const isValidPassword = await bcrypt.compare(password, user.password);
+        console.log('Contraseña válida:', isValidPassword);
+        
         if (!isValidPassword) {
             return res.status(401).json({ 
                 status: 'error',
@@ -35,6 +41,7 @@ router.post('/login', async (req, res) => {
         }
 
         // Verificar si el usuario está activo
+        console.log('Usuario activo:', user.is_active);
         if (!user.is_active) {
             return res.status(403).json({
                 status: 'error',

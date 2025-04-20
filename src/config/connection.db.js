@@ -14,7 +14,8 @@ const dbConn = new Sequelize(
       allowPublicKeyRetrieval: true,
       ssl: {
         rejectUnauthorized: false
-      }
+      },
+      version: '10.6'
     },
     pool: {
       max: 5,
