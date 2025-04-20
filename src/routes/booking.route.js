@@ -1,5 +1,5 @@
 const { Router } = require('express');
-const { getBookings, getBooking, postBooking, putBooking, deleteBooking, getnewerBookings } = require('../controller/bookingsController.js');
+const { getBookings, getBooking, postBooking, putBooking, deleteBooking, getnewerBookings } = require('../controllers/bookings.controller.js');
 const router = Router();
 
 // Definir rutas para las reservas

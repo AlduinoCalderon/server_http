@@ -1,5 +1,5 @@
 const { DataTypes } = require('sequelize');
-const conecta = require('../database/conecta');
+const conecta = require('../config/connection.db');
 
 const Image = conecta.define('image', {
     image_id: {  // Clave primaria

@@ -1,5 +1,5 @@
 const { Router } = require('express');
-const { getPayments, getPayment, postPayment, putPayment, deletePayment } = require('../controller/paymentsController.js');
+const { getPayments, getPayment, postPayment, putPayment, deletePayment } = require('../controllers/payments.controller.js');
 const router = Router();
 
 // Definir rutas para los pagos

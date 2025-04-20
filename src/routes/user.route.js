@@ -1,5 +1,5 @@
 const { Router } = require('express');
-const { getUsers, getUser, postUser, putUser, deleteUser, registerUser, verifyEmail } = require('../controller/usersController.js');
+const { getUsers, getUser, postUser, putUser, deleteUser, registerUser, verifyEmail } = require('../controllers/users.controller.js');
 const router = Router();
 
 router.get('/', getUsers); // Obtener todos los usuarios
