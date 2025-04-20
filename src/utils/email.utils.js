@@ -18,13 +18,10 @@ const sendVerificationEmail = async (email, token) => {
     const msg = {
         to: email,
         from: process.env.EMAIL_FROM,
-        subject: 'Verifica tu correo electrónico',
-        html: `
-            <h1>Bienvenido a nuestra plataforma</h1>
-            <p>Por favor, verifica tu correo electrónico haciendo clic en el siguiente enlace:</p>
-            <a href="${verificationUrl}">Verificar correo electrónico</a>
-            <p>Si no has creado una cuenta, puedes ignorar este correo.</p>
-        `
+        templateId: 'd-acb1046415524009a88be06ea3d9b091',
+        dynamicTemplateData: {
+            verificationUrl
+        }
     };
 
     try {
