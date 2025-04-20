@@ -1,5 +1,4 @@
 const { DataTypes } = require('sequelize');
-const bcrypt = require('bcrypt');
 const conecta = require('../config/connection.db');
 
 const User = conecta.define('user', {
@@ -23,7 +22,8 @@ const User = conecta.define('user', {
     },
     password: { 
         type: DataTypes.STRING, 
-        allowNull: false
+        allowNull: false, 
+        defaultValue: 'contraseña123' 
     },
     role: { 
         type: DataTypes.ENUM('user', 'admin'), 
@@ -32,7 +32,7 @@ const User = conecta.define('user', {
     },
     is_active: { 
         type: DataTypes.BOOLEAN, 
-        defaultValue: true 
+        defaultValue: false 
     },
     telefono: { 
         type: DataTypes.STRING, 
@@ -55,21 +55,7 @@ const User = conecta.define('user', {
     }
 }, {
     tableName: 'users',  
-    timestamps: false,
-    hooks: {
-        beforeCreate: async (user) => {
-            if (user.password) {
-                const salt = await bcrypt.genSalt(10);
-                user.password = await bcrypt.hash(user.password, salt);
-            }
-        },
-        beforeUpdate: async (user) => {
-            if (user.changed('password')) {
-                const salt = await bcrypt.genSalt(10);
-                user.password = await bcrypt.hash(user.password, salt);
-            }
-        }
-    }   
+    timestamps: false,   
 });
 
 module.exports = User;
