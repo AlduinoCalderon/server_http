@@ -7,10 +7,12 @@ class AuthController {
     async registrar(req, res) {
         try {
             const { first_name, last_name, email, password, telefono } = req.body;
+            console.log(`[REGISTRO] Intento de registro para email: ${email}`);
 
             // Verificar si el usuario ya existe
             const usuarioExistente = await User.findOne({ where: { email } });
             if (usuarioExistente) {
+                console.log(`[REGISTRO] Email ya registrado: ${email}`);
                 return res.status(400).json({
                     status: 'error',
                     message: 'El email ya está registrado'
@@ -33,8 +35,13 @@ class AuthController {
                 verification_token: jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '24h' })
             });
 
+            console.log(`[REGISTRO] Usuario creado exitosamente: ${email}`);
+
             // Enviar email de verificación
-            await sendVerificationEmail(usuario.email, usuario.verification_token);
+            const emailEnviado = await sendVerificationEmail(usuario.email, usuario.verification_token);
+            if (!emailEnviado) {
+                console.log(`[REGISTRO] Error al enviar email de verificación a: ${email}`);
+            }
 
             // Eliminar datos sensibles antes de enviar la respuesta
             const usuarioResponse = {
@@ -53,6 +60,8 @@ class AuthController {
                 usuario: usuarioResponse
             });
         } catch (error) {
+            console.error(`[REGISTRO] Error al registrar usuario: ${error.message}`);
+            console.error(`[REGISTRO] Stack trace: ${error.stack}`);
             res.status(500).json({
                 status: 'error',
                 message: 'Error al registrar usuario',
@@ -64,10 +73,12 @@ class AuthController {
     async iniciarSesion(req, res) {
         try {
             const { email, password } = req.body;
+            console.log(`[LOGIN] Intento de inicio de sesión para email: ${email}`);
 
             // Buscar usuario
             const usuario = await User.findOne({ where: { email } });
             if (!usuario) {
+                console.log(`[LOGIN] Usuario no encontrado: ${email}`);
                 return res.status(401).json({
                     status: 'error',
                     message: 'Credenciales inválidas'
@@ -77,6 +88,7 @@ class AuthController {
             // Verificar contraseña
             const passwordValida = await bcrypt.compare(password, usuario.password);
             if (!passwordValida) {
+                console.log(`[LOGIN] Contraseña incorrecta para usuario: ${email}`);
                 return res.status(401).json({
                     status: 'error',
                     message: 'Credenciales inválidas'
@@ -85,6 +97,7 @@ class AuthController {
 
             // Verificar si el usuario está activo
             if (!usuario.is_active) {
+                console.log(`[LOGIN] Usuario inactivo intentando acceder: ${email}`);
                 return res.status(401).json({
                     status: 'error',
                     message: 'Tu cuenta está desactivada'
@@ -101,6 +114,8 @@ class AuthController {
                 process.env.JWT_SECRET,
                 { expiresIn: process.env.JWT_EXPIRES_IN }
             );
+
+            console.log(`[LOGIN] Inicio de sesión exitoso para usuario: ${email}`);
 
             // Eliminar datos sensibles antes de enviar la respuesta
             const usuarioResponse = {
@@ -119,6 +134,8 @@ class AuthController {
                 usuario: usuarioResponse
             });
         } catch (error) {
+            console.error(`[LOGIN] Error al iniciar sesión: ${error.message}`);
+            console.error(`[LOGIN] Stack trace: ${error.stack}`);
             res.status(500).json({
                 status: 'error',
                 message: 'Error al iniciar sesión',
