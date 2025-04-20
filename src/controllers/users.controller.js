@@ -2,7 +2,7 @@ const { response } = require("express");
 const UserModel = require('../models/user');
 const { QueryTypes } = require('sequelize');
 const jwt = require('jsonwebtoken');
-const { sendEmail } = require('../utils/sendGridEmailService');
+const { sendVerificationEmail } = require('../utils/email.utils');
 const crypto = require('crypto');
 const getUsers = async (req, resp = response) => {
     const users = await UserModel.sequelize.query("SELECT * FROM users WHERE is_active = true", { type: QueryTypes.SELECT });
@@ -26,7 +26,6 @@ const getUser = async (req, resp = response) => {
 };
 
 // Función para registrar un usuario
-// Función para registrar un usuario
 const registerUser = async (req, resp = response) => {
     const { first_name, last_name, email, password, telefono, role } = req.body;
 
@@ -48,30 +47,21 @@ const registerUser = async (req, resp = response) => {
         // Actualizar el campo verification_token en la base de datos
         await user.update({ verification_token: verificationToken });
 
-        // Generar la URL de verificación con el email en vez del user_id
-        const verificationUrl = `https://cabinsfront.vercel.app/users/verify-email/${user.email}/${verificationToken}`;
-
         // Enviar correo de verificación
-        await sendEmail({
-            to: user.email,
-            subject: 'Verifica tu correo en el Sistema de Reserva de Cabañas',
-            templateId: 'd-acb1046415524009a88be06ea3d9b091', // ID de la plantilla de SendGrid
-            dynamicTemplateData: {
-                verificationUrl
-            }
-        });
+        const emailEnviado = await sendVerificationEmail(user.email, verificationToken);
+        if (!emailEnviado) {
+            console.log(`[REGISTRO] Error al enviar email de verificación a: ${email}`);
+        }
 
         resp.json({
             mensaje: "Usuario registrado. Revisa tu correo para verificar tu cuenta."
         });
     } catch (error) {
-        console.log(error);
+        console.error(`[REGISTRO] Error al registrar usuario: ${error.message}`);
+        console.error(`[REGISTRO] Stack trace: ${error.stack}`);
         resp.status(500).json({ mensaje: "Error en el servidor" });
     }
 };
-
-
-// Función para verificar el token y activar la cuenta
 
 // Función para verificar el token y activar la cuenta
 const verifyEmail = async (req, res) => {

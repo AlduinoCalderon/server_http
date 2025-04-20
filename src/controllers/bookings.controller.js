@@ -4,7 +4,7 @@ const sequelize = require('../config/connection.db');
 const BookingModel = require('../models/booking');
 const UserModel = require('../models/user');
 const CabinModel = require('../models/cabin');
-const sendEmail = require('../utils/sendGridEmailService');
+const { sendBookingConfirmationEmail } = require('../utils/email.utils');
 const moment = require('moment');
 
 const getBookings = async (req, resp = response) => {
@@ -72,25 +72,17 @@ const postBooking = async (req, resp = response) => {
             total_cost: totalCost
         };
 
-        // Asunto del correo
-        const subject = 'Confirmación de Reserva';
-
         // Enviar el correo de confirmación de la reserva
-        try {
-            await sendEmail.sendEmail({
-                to: user.email,
-                subject: subject,
-                templateId: 'd-efba084a8c8a4927a2a3835de9237ee4', 
-                dynamicTemplateData: bookingInfo
-            });
-        } catch (error) {
-            console.error('Error al enviar el correo:', error);
+        const emailEnviado = await sendBookingConfirmationEmail(user.email, bookingInfo);
+        if (!emailEnviado) {
+            console.log(`[BOOKING] Error al enviar email de confirmación a: ${user.email}`);
         }
 
         resp.json({ mensaje: "Reserva creada exitosamente.", Booking: booking });
     } catch (error) {
         await transaction.rollback();
-        console.error(error);
+        console.error(`[BOOKING] Error al crear reserva: ${error.message}`);
+        console.error(`[BOOKING] Stack trace: ${error.stack}`);
         resp.status(500).json({ mensaje: "Error en el servidor" });
     }
 };
@@ -133,25 +125,17 @@ const putBooking = async (req, resp = response) => {
             total_cost: totalCost
         };
 
-        // Asunto del correo
-        const subject = 'Actualización de Reserva';
-
         // Enviar el correo de actualización de la reserva
-        try {
-            await sendEmail.sendEmail({
-                to: user.email,
-                subject: subject,
-                templateId: 'd-efba084a8c8a4927a2a3835de9237ee4',  
-                dynamicTemplateData: bookingInfo
-            });
-        } catch (error) {
-            console.error('Error al enviar el correo:', error);
+        const emailEnviado = await sendBookingConfirmationEmail(user.email, bookingInfo, true);
+        if (!emailEnviado) {
+            console.log(`[BOOKING] Error al enviar email de actualización a: ${user.email}`);
         }
 
         resp.json({ mensaje: "Reserva actualizada exitosamente.", Booking: booking });
     } catch (error) {
         await transaction.rollback();
-        console.error(error);
+        console.error(`[BOOKING] Error al actualizar reserva: ${error.message}`);
+        console.error(`[BOOKING] Stack trace: ${error.stack}`);
         resp.status(500).json({ mensaje: "Error en el servidor" });
     }
 };
