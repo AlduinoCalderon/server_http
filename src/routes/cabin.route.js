@@ -1,5 +1,5 @@
 const { Router } = require('express');
-const { getCabins, getCabin, postCabin, putCabin, deleteCabin } = require('../controller/cabinsController.js');
+const { getCabins, getCabin, postCabin, putCabin, deleteCabin } = require('../controllers/cabins.controller.js');
 const router = Router();
 
 // Definir rutas para las cabañas

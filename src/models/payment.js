@@ -1,5 +1,5 @@
 const { DataTypes } = require('sequelize');
-const conecta = require('../database/conecta');
+const conecta = require('../config/connection.db');
 
 const Payment = conecta.define('payment', {
     payment_id: {  // Clave primaria

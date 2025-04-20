@@ -1,6 +1,6 @@
 // Cargar el archivo .env
 require('dotenv').config();
-const Server = require('./models/Server');
+const Server = require('./models/Server.js');
 
 try {
     const serverExpress = new Server();
@@ -8,7 +8,4 @@ try {
 } catch (error) {
     console.error('Error al iniciar el servidor:', error);
     process.exit(1);
-}
-
-
-
+} 

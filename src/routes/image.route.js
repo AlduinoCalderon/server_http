@@ -1,5 +1,5 @@
 const { Router } = require('express');
-const { getImages, getImage, postImage, putImage, deleteImage, uploadImage } = require('../controller/imagesController');
+const { getImages, getImage, postImage, putImage, deleteImage, uploadImage } = require('../controllers/images.controller');
 
 
 const router = Router();
