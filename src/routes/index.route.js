@@ -3,6 +3,7 @@ const router = express.Router();
 
 // Importar todas las rutas
 const healthRoutes = require('./health.route');
+const authRoutes = require('./auth.route');
 const userRoutes = require('./user.route');
 const cabinRoutes = require('./cabin.route');
 const bookingRoutes = require('./booking.route');
@@ -11,6 +12,7 @@ const imageRoutes = require('./image.route');
 
 // Registrar todas las rutas
 router.use('/health', healthRoutes);
+router.use('/auth', authRoutes);
 router.use('/users', userRoutes);
 router.use('/cabins', cabinRoutes);
 router.use('/bookings', bookingRoutes);
