@@ -1,7 +1,7 @@
 const { Router } = require('express');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const { User } = require('../models/user');
+const User = require('../models/user');
 const router = Router();
 
 router.post('/login', async (req, res) => {
@@ -34,8 +34,8 @@ router.post('/login', async (req, res) => {
             });
         }
 
-        // Verificar si el email está verificado
-        if (!user.email_verified) {
+        // Verificar si el usuario está activo
+        if (!user.is_active) {
             return res.status(403).json({
                 status: 'error',
                 message: 'Por favor verifica tu email antes de iniciar sesión'
@@ -45,7 +45,7 @@ router.post('/login', async (req, res) => {
         // Generar token JWT
         const token = jwt.sign(
             { 
-                userId: user.id, 
+                userId: user.user_id, 
                 role: user.role,
                 email: user.email
             },
